@@ -111,8 +111,8 @@
         }
 
         .mlk-quote {
-            margin-top: 60px;
-            padding: 40px;
+            margin-top: 40px;
+            padding: 20px;
             background: rgba(212, 196, 168, 0.15);
             border-left: 5px solid var(--gold);
             font-family: var(--font-serif);
@@ -404,55 +404,111 @@
             opacity: 1;
         }
 
-        .api-key-section {
+        .usage-banner {
             margin-bottom: 40px;
-            padding: 24px;
+            padding: 20px 24px;
             background: rgba(212, 175, 55, 0.08);
             border-radius: 2px;
             border-left: 4px solid var(--gold);
-        }
-
-        .api-key-section label {
-            display: block;
-            font-family: var(--font-display);
-            font-size: 16px;
+            text-align: center;
+            font-family: var(--font-body);
+            font-size: 15px;
             color: var(--sepia-dark);
-            margin-bottom: 12px;
-            letter-spacing: 1px;
         }
 
-        .api-key-input {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.8);
-            border: 2px solid var(--sepia-light);
-            border-radius: 2px;
-            font-family: monospace;
-            font-size: 14px;
+        .usage-banner strong {
             color: var(--sepia-darkest);
-            transition: all 0.3s ease;
+            font-weight: 600;
         }
 
-        .api-key-input:focus {
-            outline: none;
-            border-color: var(--gold);
-            background: rgba(255, 255, 255, 1);
+        .usage-banner.warning {
+            background: rgba(196, 116, 74, 0.08);
+            border-left-color: var(--accent);
         }
 
-        .api-key-help {
-            margin-top: 8px;
-            font-size: 13px;
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(92, 74, 66, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .login-modal-content {
+            background: var(--sepia-cream);
+            padding: 50px;
+            border-radius: 2px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: slideInUp 0.4s ease-out;
+        }
+
+        .login-modal-content h2 {
+            font-family: var(--font-display);
+            font-size: 32px;
+            color: var(--sepia-dark);
+            margin-bottom: 20px;
+        }
+
+        .login-modal-content p {
+            font-size: 16px;
             color: var(--sepia-medium);
+            margin-bottom: 30px;
             line-height: 1.6;
         }
 
-        .api-key-help a {
+        .login-modal-content .reset-info {
+            font-size: 14px;
             color: var(--accent);
-            text-decoration: none;
+            margin-bottom: 30px;
+            font-style: italic;
         }
 
-        .api-key-help a:hover {
-            text-decoration: underline;
+        .login-button {
+            padding: 14px 40px;
+            background: var(--sepia-dark);
+            color: var(--sepia-cream);
+            border: none;
+            font-family: var(--font-display);
+            font-size: 16px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            border-radius: 1px;
+            margin-right: 10px;
+        }
+
+        .login-button:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .login-button.secondary {
+            background: transparent;
+            border: 2px solid var(--sepia-light);
+            color: var(--sepia-dark);
+        }
+
+        .login-button.secondary:hover {
+            background: var(--sepia-cream);
+            border-color: var(--gold);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .loading-indicator {
@@ -641,13 +697,8 @@
 
         <div class="main-content">
             <div class="input-section">
-                <div class="api-key-section">
-                    <label>Anthropic API Key</label>
-                    <input type="password" class="api-key-input" id="apiKeyInput" placeholder="sk-ant-...">
-                    <div class="api-key-help">
-                        Get your API key from <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a>.
-                        Your key is stored locally in your browser and never sent anywhere except Anthropic's API.
-                    </div>
+                <div class="usage-banner" id="usageBanner">
+                    <strong id="usageCount">10</strong> free explorations remaining today
                 </div>
 
                 <div class="perspectives-row">
@@ -707,6 +758,16 @@
     </div>
 
     <div class="tooltip" id="tooltip"></div>
+
+    <div class="login-modal" id="loginModal">
+        <div class="login-modal-content">
+            <h2>Daily Limit Reached</h2>
+            <p>You've used all 10 free explorations for today. To continue discovering bridges and finding common ground, please log in or create a free account.</p>
+            <p class="reset-info">Your free uses will reset in <strong id="resetTime">--</strong> hours.</p>
+            <button class="login-button" onclick="handleLogin()">Login / Sign Up</button>
+            <button class="login-button secondary" onclick="closeLoginModal()">Close</button>
+        </div>
+    </div>
 
     <script>
         // Example perspectives data
@@ -869,16 +930,31 @@
         const bridgeContainer = document.getElementById('bridgeContainer');
         const loadingIndicator = document.getElementById('loadingIndicator');
         const errorMessage = document.getElementById('errorMessage');
-        const apiKeyInput = document.getElementById('apiKeyInput');
         const counter1 = document.getElementById('counter1');
         const counter2 = document.getElementById('counter2');
         const tooltip = document.getElementById('tooltip');
+        const usageBanner = document.getElementById('usageBanner');
+        const usageCount = document.getElementById('usageCount');
+        const loginModal = document.getElementById('loginModal');
+
+        // Client ID for rate limiting
+        let clientId = localStorage.getItem('bridges_client_id');
+        if (!clientId) {
+            clientId = generateClientId();
+            localStorage.setItem('bridges_client_id', clientId);
+        }
+
+        // Generate unique client ID
+        function generateClientId() {
+            return 'client_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+        }
 
         // Initialize on page load
         window.addEventListener('load', () => {
             initializeQuoteRotation();
             loadSavedData();
             setupEventListeners();
+            updateUsageDisplay();
         });
 
         // Setup all event listeners
@@ -892,7 +968,6 @@
             // Auto-save
             perspective1.addEventListener('input', debounce(saveData, 500));
             perspective2.addEventListener('input', debounce(saveData, 500));
-            apiKeyInput.addEventListener('input', debounce(saveData, 500));
 
             // Example buttons
             document.querySelectorAll('.example-link').forEach(btn => {
@@ -905,6 +980,49 @@
             // Initialize counters
             updateCharCounter(perspective1, counter1);
             updateCharCounter(perspective2, counter2);
+        }
+
+        // Update usage display
+        async function updateUsageDisplay() {
+            try {
+                const response = await fetch('/api/usage', {
+                    method: 'POST',
+                    headers: {
+                        'x-client-id': clientId,
+                        'content-type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const remaining = data.uses_remaining;
+                    
+                    usageCount.textContent = remaining;
+                    
+                    if (remaining <= 3) {
+                        usageBanner.classList.add('warning');
+                    } else {
+                        usageBanner.classList.remove('warning');
+                    }
+
+                    if (remaining === 0) {
+                        usageBanner.innerHTML = `<strong>Daily limit reached.</strong> Your free uses will reset in ${data.reset_time_hours} hours.`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking usage:', error);
+            }
+        }
+
+        // Login modal functions
+        function handleLogin() {
+            // For now, just show an alert. You can integrate actual auth later.
+            alert('Login functionality coming soon! For now, your free uses will reset in 24 hours from your first use.');
+            closeLoginModal();
+        }
+
+        function closeLoginModal() {
+            loginModal.classList.remove('active');
         }
 
         // Character counter
@@ -938,7 +1056,6 @@
         // Save data to localStorage
         function saveData() {
             localStorage.setItem('bridgesData', JSON.stringify({
-                apiKey: apiKeyInput.value,
                 perspective1: perspective1.value,
                 perspective2: perspective2.value,
                 timestamp: Date.now()
@@ -951,7 +1068,6 @@
             if (saved) {
                 try {
                     const data = JSON.parse(saved);
-                    apiKeyInput.value = data.apiKey || '';
                     perspective1.value = data.perspective1 || '';
                     perspective2.value = data.perspective2 || '';
                     updateCharCounter(perspective1, counter1);
@@ -992,16 +1108,9 @@
         async function exploreBridges() {
             const view1 = perspective1.value.trim();
             const view2 = perspective2.value.trim();
-            const apiKey = apiKeyInput.value.trim();
 
             if (!view1 || !view2) {
                 showError('Please enter both perspectives to explore bridges.');
-                return;
-            }
-
-            if (!apiKey) {
-                showError('⚠️ Please enter your Anthropic API key above');
-                apiKeyInput.focus();
                 return;
             }
 
@@ -1032,11 +1141,10 @@ BRIDGE 2: [Another shared element]
 Continue for 3-4 bridges total. Root your response in MLK's principles: the dignity of all people, justice, beloved community, the power of nonviolence, and our interconnectedness.`;
 
             try {
-                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                const response = await fetch('/api/messages', {
                     method: 'POST',
                     headers: {
-                        'x-api-key': apiKey,
-                        'anthropic-version': '2023-06-01',
+                        'x-client-id': clientId,
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
@@ -1051,6 +1159,15 @@ Continue for 3-4 bridges total. Root your response in MLK's principles: the dign
                     })
                 });
 
+                if (response.status === 429) {
+                    // Rate limit exceeded
+                    const errorData = await response.json();
+                    const resetTime = errorData.error.remaining_time_hours || 24;
+                    document.getElementById('resetTime').textContent = resetTime;
+                    loginModal.classList.add('active');
+                    return;
+                }
+
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.error?.message || `API Error: ${response.status}`);
@@ -1059,9 +1176,21 @@ Continue for 3-4 bridges total. Root your response in MLK's principles: the dign
                 const data = await response.json();
                 const content = data.content[0].text;
 
+                // Update usage display
+                const usesRemaining = response.headers.get('X-Uses-Remaining');
+                if (usesRemaining !== null) {
+                    usageCount.textContent = usesRemaining;
+                    if (parseInt(usesRemaining) <= 3) {
+                        usageBanner.classList.add('warning');
+                    }
+                }
+
                 displayBridges(content);
+                
+                // Update usage display after successful request
+                setTimeout(updateUsageDisplay, 500);
             } catch (error) {
-                showError(`Error: ${error.message}. Make sure your API key is valid and you have sufficient credits.`);
+                showError(`Error: ${error.message}`);
                 console.error('API Error:', error);
             } finally {
                 exploreBtn.classList.remove('loading');

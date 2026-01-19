@@ -1,6 +1,37 @@
-node_modules/
-.DS_Store
+# Environment variables
 .env
 .env.local
 .vercel
+
+# Node modules
+node_modules/
+.npm
+
+# Python (legacy - not used anymore)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
 *.log
+
+# Vercel
+.vercel
