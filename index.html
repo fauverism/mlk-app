@@ -677,6 +677,57 @@
             display: block;
             animation: fadeInUp 0.6s ease-out;
         }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 40px 40px;
+            margin-top: 80px;
+            border-top: 1px solid var(--sepia-light);
+            background: linear-gradient(to top, rgba(212, 196, 168, 0.05), transparent);
+        }
+
+        footer p {
+            font-size: 14px;
+            color: var(--sepia-medium);
+            margin: 8px 0;
+            line-height: 1.8;
+        }
+
+        footer a {
+            color: var(--sepia-dark);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid transparent;
+        }
+
+        footer a:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        footer .divider {
+            display: inline-block;
+            margin: 0 8px;
+            color: var(--sepia-light);
+        }
+
+        @media (max-width: 768px) {
+            footer {
+                padding: 40px 20px 30px;
+            }
+
+            footer p {
+                font-size: 13px;
+            }
+
+            footer .divider {
+                display: block;
+                margin: 0;
+                height: 0;
+                visibility: hidden;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1278,5 +1329,15 @@ Continue for 3-4 bridges total. Root your response in MLK's principles: the dign
             }, 8000);
         }
     </script>
+
+    <footer>
+        <p>Created by <a href="https://robertfauver.com" target="_blank" rel="noopener noreferrer">Robert Fauver</a></p>
+        <p>
+            Contributions welcome <span class="divider">·</span> 
+            <a href="https://github.com/fauverism/mlk-app" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <span class="divider">·</span>
+            <a href="mailto:robertfauver@gmail.com">robertfauver@gmail.com</a>
+        </p>
+    </footer>
 </body>
 </html>
