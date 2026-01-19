@@ -7,7 +7,42 @@ Get your Bridges MLK app running in 5 minutes!
 1. **Anthropic API Key**: Get one at [console.anthropic.com](https://console.anthropic.com/) (free tier available)
 2. **Node.js**: Vercel CLI requires Node.js. Install from [nodejs.org](https://nodejs.org/)
 
-## Local Development
+## 🔐 Step 1: Secure Your API Key
+
+### Option A: Automated Setup (Easiest)
+
+```bash
+cd /Users/meepmop/Documents/Claude-Code/mlk-app
+./setup-env.sh
+```
+
+This will:
+- Create a secure `.env` file
+- Prompt you for your API key
+- Verify the format
+- Add helpful comments
+
+### Option B: Manual Setup
+
+Create a `.env` file in your project root:
+
+```bash
+cd /Users/meepmop/Documents/Claude-Code/mlk-app
+touch .env
+```
+
+Open `.env` and add:
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-your-actual-key-here
+```
+
+**Important**: 
+- ✅ `.env` is already in `.gitignore` (safe!)
+- ✅ This file will NEVER be committed to GitHub
+- ✅ Your API key stays private
+
+## 🚀 Step 2: Local Development
 
 ### Install Vercel CLI (One Time Only)
 
@@ -18,7 +53,6 @@ npm install -g vercel
 ### Run Local Server
 
 ```bash
-cd /Users/meepmop/Documents/Claude-Code/mlk-app
 vercel dev
 ```
 
@@ -26,18 +60,10 @@ First time running? Follow prompts:
 - Login to Vercel (opens browser)
 - Link to existing project? **No**
 - Project name? **bridges-mlk-app**
-- Directory? **./
-
-**
-
+- Directory? **.**
 - Want to modify settings? **No**
 
-Add your API key when prompted, or run:
-
-```bash
-vercel env add ANTHROPIC_API_KEY production
-# Paste your key (sk-ant-...)
-```
+Vercel will automatically read your API key from `.env`!
 
 Open: **http://localhost:3000** 🎉
 

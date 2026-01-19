@@ -11,9 +11,34 @@ A Martin Luther King Jr. Day celebration app that helps people find common groun
 - **Beautiful UI**: Elegant sepia-toned design honoring MLK's legacy
 - **Fully Deployable**: Ready for Vercel deployment
 
+## 🔐 Security First
+
+**Your API key must be kept secret!** We've set everything up to keep it safe:
+
+- ✅ `.env` file for local development (already in `.gitignore`)
+- ✅ Vercel environment variables for production
+- ✅ API key never exposed to client-side code
+- ✅ Comprehensive security guide in [SECURITY.md](SECURITY.md)
+
 ## 🚀 Quick Start (Local Development)
 
-This app now uses **Vercel Serverless Functions** instead of Python! Test it locally with:
+### 1. Setup Your API Key Securely
+
+Run the setup script:
+```bash
+./setup-env.sh
+```
+
+Or manually create `.env`:
+```bash
+echo "ANTHROPIC_API_KEY=sk-ant-your-key-here" > .env
+```
+
+**Important**: Never commit `.env` to GitHub! (Already protected ✓)
+
+### 2. Run Locally
+
+This app uses **Vercel Serverless Functions** - no Python needed!
 
 ```bash
 # Install Vercel CLI globally (one time only)
