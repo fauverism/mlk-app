@@ -1,5 +1,13 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/bridges-mlk.html" }
-  ]
+    { "source": "/", "destination": "/index.html" }
+  ],
+  "functions": {
+    "api/messages.js": {
+      "maxDuration": 30
+    },
+    "api/usage.js": {
+      "maxDuration": 10
+    }
+  }
 }

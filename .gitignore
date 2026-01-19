@@ -1,6 +1,25 @@
-node_modules/
-.DS_Store
+# Environment variables
 .env
 .env.local
 .vercel
+
+# Node modules
+node_modules/
+.npm
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
 *.log
+
+# Vercel
+.vercel
