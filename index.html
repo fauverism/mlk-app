@@ -143,6 +143,93 @@
             color: var(--sepia-medium);
         }
 
+        /* How It Works Accordion */
+        .how-it-works {
+            max-width: 900px;
+            margin: 60px auto 80px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 2px;
+            border: 1px solid var(--sepia-light);
+            animation: fadeInUp 0.8s ease-out 0.5s backwards;
+            overflow: hidden;
+        }
+
+        .how-it-works-header {
+            padding: 20px 40px;
+            background: rgba(212, 196, 168, 0.1);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+            user-select: none;
+        }
+
+        .how-it-works-header:hover {
+            background: rgba(212, 196, 168, 0.15);
+        }
+
+        .how-it-works-header h2 {
+            font-family: var(--font-display);
+            font-size: 20px;
+            color: var(--sepia-dark);
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .accordion-icon {
+            font-size: 24px;
+            color: var(--sepia-medium);
+            transition: transform 0.3s ease;
+        }
+
+        .how-it-works.open .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .how-it-works-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .how-it-works.open .how-it-works-content {
+            max-height: 500px;
+        }
+
+        .how-it-works-content-inner {
+            padding: 30px 40px;
+        }
+
+        .how-it-works-content p {
+            font-size: 16px;
+            color: var(--sepia-medium);
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .how-it-works {
+                margin: 40px 20px 60px;
+            }
+
+            .how-it-works-header {
+                padding: 16px 20px;
+            }
+
+            .how-it-works-header h2 {
+                font-size: 18px;
+            }
+
+            .how-it-works-content-inner {
+                padding: 20px;
+            }
+
+            .how-it-works-content p {
+                font-size: 15px;
+            }
+        }
+
         /* Main content */
         .main-content {
             display: flex;
@@ -405,6 +492,7 @@
         }
 
         .usage-banner {
+            display: none;
             margin-bottom: 40px;
             padding: 20px 24px;
             background: rgba(212, 175, 55, 0.08);
@@ -414,6 +502,11 @@
             font-family: var(--font-body);
             font-size: 15px;
             color: var(--sepia-dark);
+            animation: fadeInDown 0.4s ease-out;
+        }
+
+        .usage-banner.visible {
+            display: block;
         }
 
         .usage-banner strong {
@@ -712,6 +805,12 @@
             color: var(--sepia-light);
         }
 
+        footer .tech-stack {
+            margin-top: 16px;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
         @media (max-width: 768px) {
             footer {
                 padding: 40px 20px 30px;
@@ -746,11 +845,21 @@
             </div>
         </header>
 
+        <div class="how-it-works" id="howItWorks">
+            <div class="how-it-works-header">
+                <h2>How Bridges Works</h2>
+                <span class="accordion-icon">▼</span>
+            </div>
+            <div class="how-it-works-content">
+                <div class="how-it-works-content-inner">
+                    <p>Enter two opposing perspectives and let AI discover their common ground. Bridges uses Claude to reveal shared values beneath surface disagreements—turning conflict into conversation starters for families, educators, mediators, and anyone seeking unity in divided times.</p>
+                </div>
+            </div>
+        </div>
+
         <div class="main-content">
             <div class="input-section">
-                <div class="usage-banner" id="usageBanner">
-                    <strong id="usageCount">10</strong> free explorations remaining today
-                </div>
+                <div class="usage-banner" id="usageBanner"></div>
 
                 <div class="perspectives-row">
                     <div class="perspective-input">
@@ -1001,7 +1110,18 @@
             loadSavedData();
             setupEventListeners();
             updateUsageDisplay();
+            initializeAccordion();
         });
+
+        // Accordion functionality
+        function initializeAccordion() {
+            const accordion = document.getElementById('howItWorks');
+            const header = accordion.querySelector('.how-it-works-header');
+            
+            header.addEventListener('click', () => {
+                accordion.classList.toggle('open');
+            });
+        }
 
         // Setup all event listeners
         function setupEventListeners() {
@@ -1045,14 +1165,21 @@
                     
                     usageCount.textContent = remaining;
                     
-                    if (remaining <= 3) {
-                        usageBanner.classList.add('warning');
-                    } else {
-                        usageBanner.classList.remove('warning');
-                    }
-
-                    if (remaining === 0) {
+                    // Only show banner when running low (5 or fewer)
+                    if (remaining <= 5 && remaining > 0) {
+                        usageBanner.classList.add('visible');
+                        usageBanner.innerHTML = `<strong>${remaining}</strong> free explorations remaining today`;
+                        
+                        if (remaining <= 3) {
+                            usageBanner.classList.add('warning');
+                        } else {
+                            usageBanner.classList.remove('warning');
+                        }
+                    } else if (remaining === 0) {
+                        usageBanner.classList.add('visible', 'warning');
                         usageBanner.innerHTML = `<strong>Daily limit reached.</strong> Your free uses will reset in ${data.reset_time_hours} hours.`;
+                    } else {
+                        usageBanner.classList.remove('visible', 'warning');
                     }
                 }
             } catch (error) {
@@ -1225,9 +1352,17 @@ Continue for 3-4 bridges total. Root your response in MLK's principles: the dign
                 // Update usage display
                 const usesRemaining = response.headers.get('X-Uses-Remaining');
                 if (usesRemaining !== null) {
-                    usageCount.textContent = usesRemaining;
-                    if (parseInt(usesRemaining) <= 3) {
-                        usageBanner.classList.add('warning');
+                    const remaining = parseInt(usesRemaining);
+                    usageCount.textContent = remaining;
+                    
+                    // Only show banner when running low
+                    if (remaining <= 5 && remaining > 0) {
+                        usageBanner.classList.add('visible');
+                        usageBanner.innerHTML = `<strong>${remaining}</strong> free explorations remaining today`;
+                        
+                        if (remaining <= 3) {
+                            usageBanner.classList.add('warning');
+                        }
                     }
                 }
 
@@ -1337,6 +1472,12 @@ Continue for 3-4 bridges total. Root your response in MLK's principles: the dign
             <a href="https://github.com/fauverism/mlk-app" target="_blank" rel="noopener noreferrer">GitHub</a>
             <span class="divider">·</span>
             <a href="mailto:robertfauver@gmail.com">robertfauver@gmail.com</a>
+        </p>
+        <p class="tech-stack">
+            Built with 
+            <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">Vercel</a>, 
+            <a href="https://www.anthropic.com/claude" target="_blank" rel="noopener noreferrer">Claude</a>, and 
+            <a href="https://cursor.com" target="_blank" rel="noopener noreferrer">Cursor</a>
         </p>
     </footer>
 </body>
