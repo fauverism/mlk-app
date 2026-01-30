@@ -1089,7 +1089,6 @@
         const counter2 = document.getElementById('counter2');
         const tooltip = document.getElementById('tooltip');
         const usageBanner = document.getElementById('usageBanner');
-        const usageCount = document.getElementById('usageCount');
         const loginModal = document.getElementById('loginModal');
 
         // Client ID for rate limiting
@@ -1162,8 +1161,6 @@
                 if (response.ok) {
                     const data = await response.json();
                     const remaining = data.uses_remaining;
-                    
-                    usageCount.textContent = remaining;
                     
                     // Only show banner when running low (5 or fewer)
                     if (remaining <= 5 && remaining > 0) {
@@ -1353,7 +1350,6 @@ Continue for 3-4 bridges total. Root your response in MLK's principles: the dign
                 const usesRemaining = response.headers.get('X-Uses-Remaining');
                 if (usesRemaining !== null) {
                     const remaining = parseInt(usesRemaining);
-                    usageCount.textContent = remaining;
                     
                     // Only show banner when running low
                     if (remaining <= 5 && remaining > 0) {
